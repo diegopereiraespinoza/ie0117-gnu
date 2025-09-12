@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Stops a service that monitors changes in a directory
+# Tested on: Arch Linux | Linux Mint
+# Author: Diego Pereira Espinoza
+# Date: 2025-09-08
+
+# --kill-whom=main, implies inotifywait
+# --kill-whom=control, implies ejercicio3daemon
+# --kill-whom=all, implies both
+# --kill-value=INT
+# -s TERM, --signal=SIGTERM, --kill-value=15, gracefully allowing saving data before exiting
+# -s KILL, --signal=SIGKILL, --kill-value=9, forcefully avoiding any action, last resort
+# -s INT, --signal=SIGINT, --kill-value=2
+# -s STOP, --signal=SIGSTOP, --kill-value=19
+# -s help, will list the known values 
+# -s list, will list the known values and signal numbers
+# --now, tries to start if enable, stop if disable, restart if reenable
+# --kill-value=9, only accepted for realtime signals
+# --signal=SIGTERM, refusing, not accepted
+#systemctl --kill-whom=all --signal=SIGTERM --kill-value=9 kill ejercicio3 # REFUSING
+systemctl --kill-whom=all --signal=SIGTERM kill ejercicio3
+# does not finishes older instances, only the current
+systemctl stop ejercicio3
+# terminates all instances of process
+# -f, matches only the full name, not only containing the word as regex
+# -n, newest
+# -o, oldest
+#pkill -f "inotifywait"
+# killall is an alternative to pkill
+killall "inotifywait"
+# prints if there are instances running
+# -n, newest
+# -o, oldest
+#pgrep -n "inotifywait"
+# prints only the ID of all instances
+#pgrep "inotifywait"
+# ps and grep is an alternative to pgrep
+# -a, matches all
+# -u, current user
+# -x, must have a tty
+ps aux | grep "inotifywait" | grep -v grep
+exit 0

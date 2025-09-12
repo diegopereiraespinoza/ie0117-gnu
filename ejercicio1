@@ -1,0 +1,643 @@
+#!/bin/bash
+
+# This script review users, groups, and permissions
+# Tested on: macOS X 10.14 Mojave | Arch Linux | Linux Mint
+# Author: Diego Pereira Espinoza
+# Date: 2025-09-08
+
+# stores the script arguments for sudo execution (NOT symbolic links)
+# declares a variable as available for exporting 
+# outside the environment of the script itself
+#declare -x SCRIPT_REAL_PATH="${BASH_SOURCE[0]}"
+declare -x SCRIPT_REAL_PATH
+declare -x SCRIPT_REAL_DIR
+declare -x SCRIPT_REAL_NAME
+declare -x SCRIPT_EXEC_DIR
+# export allows to be accessible by child processes
+# scripts and functions launched from the current shell
+# environment variables are passed down to child processes, not up to parent
+# exporting a variable in a child will not make it available to the parent
+# export IS NOT necessary, declare -x is sufficient
+# export SCRIPT_REAL_PATH
+
+# switch user identities within the session
+declare -x USER_REAL_NAME
+declare -x USER_EXEC_NAME
+# stores the script arguments for permissions
+declare -x OPT_USER_NAME
+declare -x OPT_GROUP_NAME
+declare -x FILE_INPUT_STR
+# stores the file arguments for real (NOT symbolic links)
+declare -x FILE_REAL_PATH
+declare -x FILE_REAL_DIR
+declare -x FILE_REAL_NAME
+
+#if [[ -f "/usr/bin/clear" ]]; then
+if [[ -n "$(command -v clear 2>/dev/null)" ]]; then
+	clear
+fi
+
+if [[ -n "$(command -v logname 2>/dev/null)" ]]; then
+	USER_REAL_NAME=`logname`
+fi
+
+if [[ -n "$(command -v whoami 2>/dev/null)" ]]; then
+	USER_EXEC_NAME=`whoami`
+fi
+
+printred() {
+  printf "\e[1;31m${1}\e[0m"
+}
+printgreen() {
+  printf "\e[1;32m${1}\e[0m"
+}
+printyellow() {
+  printf "\e[1;33m${1}\e[0m"
+}
+printblue() {
+  printf "\e[1;34m${1}\e[0m"
+}
+printpurple() {
+  printf "\e[1;35m${1}\e[0m"
+}
+
+function main_process() {
+	# Darwin for macOS / Linux for GNU
+	# grep -A 0 -w -F
+	# -A 0, returns only the first line
+	# -w, matches only complete words
+	# -F, fixed strings not regular expressions
+	local os_name=$(uname -s)
+	local str_out=""
+	# stores a group id
+	local group_id="$(id -g "${OPT_GROUP_NAME}" 2>/dev/null)"
+	# stores an user id
+	local user_id="$(id -u "${OPT_USER_NAME}" 2>/dev/null)"
+	shopt -s nocasematch # enable case-insensitive
+	if [[ "${os_name}" == "Darwin" ]]; then
+		# macOS-specific commands
+		# check if the user EXISTS
+		user_id=$(dscl . list "/Users" PrimaryGroupID | grep -A 0 -w -F "${OPT_USER_NAME}" | awk -F ' ' '{print $2;}' 2>/dev/null)
+		if [[ -n "${user_id}" ]]; then
+			# user EXIST
+			# deletes the user account
+			#str_out=$(dscl . -delete "/Users/${OPT_USER_NAME}" 1>/dev/null 2>&1) # NOT WORKING
+			#str_out=$(sysadminctl -deleteUser "${OPT_USER_NAME}" 1>/dev/null 2>&1) # NOT WORKING
+			#str_out=$(sysadminctl interactive -deleteUser "${OPT_USER_NAME}" 1>/dev/null 2>&1) # IT'S WORKING!!
+			#str_out=$(rm -rf "/Users/${OPT_USER_NAME}" 1>/dev/null 2>&1) # IT'S WORKING!!
+			printgreen "Usuario "
+			printyellow "${OPT_USER_NAME}"
+			printgreen " ya existe con ID "
+			printyellow "${user_id}"
+			echo
+		fi
+		# check if the group EXISTS
+		group_id=$(dscl . list "/Groups" PrimaryGroupID | grep -A 0 -w -F "${OPT_GROUP_NAME}" | awk -F ' ' '{print $2;}' 2>/dev/null)
+		if [[ -n "${group_id}" ]]; then
+			# group EXISTS
+			# deletes the group
+			#str_out=$(dscl . -delete "/Groups/${OPT_GROUP_NAME}" 1>/dev/null 2>&1) # NOT WORKING
+			#str_out=$(dseditgroup -o delete "${OPT_GROUP_NAME}" 1>/dev/null 2>&1) # IT'S WORKING!!
+			printgreen "Grupo "
+			printyellow "${OPT_GROUP_NAME}"
+			printgreen " ya existe con ID "
+			printyellow "${group_id}"
+			echo
+		else
+			# group DOES NOT exist
+			# creates the group
+			# <<< flag n, auto-confirm NOT to overwrite if group exists
+			# <<< use flag y, if you want auto-confirm YES to overwrite
+			str_out=$(dseditgroup -o create "${OPT_GROUP_NAME}" <<< $'n\n' 1>/dev/null 2>&1) # IT'S WORKING!!
+			group_id=$(dscl . list "/Groups" PrimaryGroupID | grep -A 0 -w -F "${OPT_GROUP_NAME}" | awk -F ' ' '{print $2;}' 2>/dev/null)
+			if [[ -n "${group_id}" ]]; then
+				printgreen "Se crea el grupo "
+				printyellow "${OPT_GROUP_NAME}"
+				printgreen " con ID "
+				printyellow "${group_id}"
+				echo
+			else
+				printred "No se pudo crear el grupo "
+				printyellow "${OPT_GROUP_NAME}"
+				echo
+				exit 1
+			fi
+		fi
+		# check if the user DOES NOT exists
+		user_id=$(dscl . list "/Users" PrimaryGroupID | grep -A 0 -w -F "${OPT_USER_NAME}" | awk -F ' ' '{print $2;}' 2>/dev/null)
+		if [[ -z "${user_id}" ]]; then
+			# user does NOT exist
+			# creates the user account
+			#str_out=$(dscl . -create "/Users/${OPT_USER_NAME}" UserShell "/bin/bash" 1>/dev/null 2>&1) # NOT WORKING
+			#str_out=$(sysadminctl -addUser "${OPT_USER_NAME}" -password "-" 1>/dev/null 2>&1) # NOT WORKING
+			str_out=$(sysadminctl interactive -addUser "${OPT_USER_NAME}" 1>/dev/null 2>&1) # IT'S WORKING!!
+			user_id=$(dscl . list "/Users" PrimaryGroupID | grep -A 0 -w -F "${OPT_USER_NAME}" | awk -F ' ' '{print $2;}' 2>/dev/null)
+			if [[ -n "${user_id}" ]]; then
+				printgreen "Se crea el usuario "
+				printyellow "${OPT_USER_NAME}"
+				printgreen " con ID "
+				printyellow "${user_id}"
+				echo
+			else
+				printred "No se pudo crear el usuario "
+				printyellow "${OPT_USER_NAME}"
+				echo
+				exit 1
+			fi
+		fi
+		# check if user belongs to group
+		#str_out=$(id -nG "${OPT_USER_NAME}" | grep -A 0 -w -F "${OPT_GROUP_NAME}" 2>/dev/null) # IT'S WORKING!!
+		str_out=$(groups "${OPT_USER_NAME}" | grep -A 0 -w -F "${OPT_GROUP_NAME}" 2>/dev/null) # IT'S WORKING!!
+		if [[ -z "${str_out}" ]]; then
+			# user does not belong to group
+			# to grant the user additional permissions
+			# can add users to existing groups like
+			# root for administrative privileges
+			str_out=$(dscl . -append "/Groups/${OPT_GROUP_NAME}" GroupMembership "${OPT_USER_NAME}") # IT'S WORKING!!
+			if [[ -z "${str_out}" ]]; then
+				printgreen "Se agrega el usuario "
+				printyellow "${OPT_USER_NAME}"
+				printgreen " al grupo "
+				printyellow "${OPT_GROUP_NAME}"
+				echo
+			else
+				printred "No se pudo agregar el usuario "
+				printyellow "${OPT_USER_NAME}"
+				printred " al grupo "
+				printyellow "${OPT_GROUP_NAME}"
+				echo
+				exit 1
+			fi
+		else
+			printgreen "Usuario "
+			printyellow "${OPT_USER_NAME}"
+			printgreen " ya pertenece al grupo "
+			printyellow "${OPT_GROUP_NAME}"
+			echo
+		fi
+	else
+		# linux-specific commands
+		# check if the user EXISTS
+		user_id=$(getent passwd | grep -A 0 -w -F "${OPT_USER_NAME}" | awk -F ':' '{print $3;}' 2>/dev/null)
+		if [[ -n "${user_id}" ]]; then
+			# user EXIST
+			# deletes the user account
+			# first removes the user relationship to the group
+			#str_out=$(gpasswd -d "${OPT_USER_NAME}" "${OPT_GROUP_NAME}" 2>&1)
+			#str_out=$(echo "${str_out}" | sed "s|Removing user ${OPT_USER_NAME} from group ${OPT_GROUP_NAME}||g")
+			#str_out=$(usermod -rG "${OPT_GROUP_NAME}" "${OPT_USER_NAME}" 2>&1)
+			# -r, recursively removes the home directory
+			# -f, forces it can lead to orphaned UIDs/GIDs
+			# and potential issues for the affected users.
+			# ALSO REMOVES THE GROUP IF IT IS THE UNIQUE USER
+			#str_out=$(userdel -r "${OPT_USER_NAME}" 1>/dev/null 2>&1)
+			# recursively removes the home directory
+			#str_out=$(rm -rf "/home/${OPT_USER_NAME}" 1>/dev/null 2>&1)
+			printgreen "Usuario "
+			printyellow "${OPT_USER_NAME}"
+			printgreen " ya existe con ID "
+			printyellow "${user_id}"
+			echo
+		fi
+		# check if the group EXISTS
+		group_id=$(getent group | grep -A 0 -w -F "${OPT_GROUP_NAME}" | awk -F ':' '{print $3;}' 2>/dev/null)
+		if [[ -n "${group_id}" ]]; then
+			# group EXIST
+			# deletes the group
+			# first removes the user relationship to the group
+			#str_out=$(gpasswd -d "${OPT_USER_NAME}" "${OPT_GROUP_NAME}" 2>&1)
+			#str_out=$(echo "${str_out}" | sed "s|Removing user ${OPT_USER_NAME} from group ${OPT_GROUP_NAME}||g")
+			#str_out=$(usermod -rG "${OPT_GROUP_NAME}" "${OPT_USER_NAME}" 2>&1)
+			# -f, forces it can lead to orphaned UIDs/GIDs
+			# and potential issues for the affected users.
+			#str_out=$(groupdel -f "${OPT_GROUP_NAME}")
+			# FIRST NEEDS TO REMOVE THE USER IF IT IS THE PRIMARY GROUP
+			#str_out=$(groupdel "${OPT_GROUP_NAME}" 1>/dev/null 2>&1)
+			printgreen "Grupo "
+			printyellow "${OPT_GROUP_NAME}"
+			printgreen " ya existe con ID "
+			printyellow "${group_id}"
+			echo
+		else
+			# group DOES NOT exist
+			# creates the group
+			str_out=$(groupadd "${OPT_GROUP_NAME}" 1>/dev/null 2>&1)
+			group_id=$(getent group | grep -A 0 -w -F "${OPT_GROUP_NAME}" | awk -F ':' '{print $3;}' 2>/dev/null)
+			if [[ -n "${group_id}" ]]; then
+				printgreen "Se crea el grupo "
+				printyellow "${OPT_GROUP_NAME}"
+				printgreen " con ID "
+				printyellow "${group_id}"
+				echo
+			else
+				printred "No se pudo crear el grupo "
+				printyellow "${OPT_GROUP_NAME}"
+				echo
+				exit 1
+			fi
+		fi
+		# check if the user DOES NOT exists
+		user_id=$(getent passwd | grep -A 0 -w -F "${OPT_USER_NAME}" | awk -F ':' '{print $3;}' 2>/dev/null)
+		if [[ -z "${user_id}" ]]; then
+			# user does NOT exist
+			# creates the user account
+			# -m, creates the user's home directory if it doesn't exist
+			# -s, default login to shell : "/bin/bash" | "/bin/zsh" | others
+			group_id=$(getent group | grep -A 0 -w -F "${OPT_GROUP_NAME}" | awk -F ':' '{print $3;}' 2>/dev/null)
+			if [[ -n "${group_id}" ]]; then # group EXISTS
+				# BETTER IF SPECIFIES THE GROUP
+				str_out=$(useradd -m -s "/bin/bash" "${OPT_USER_NAME}" -g "${OPT_GROUP_NAME}" 1>/dev/null 2>&1)
+			else # group DOES NOT exist
+				# AUTO CREATES A PRIMARY GROUP WITH THE SAME NAME. NOT RECOMMENDED!!
+				str_out=$(useradd -m -s "/bin/bash" "${OPT_USER_NAME}" 1>/dev/null 2>&1)
+			fi
+			# sets the user password
+			str_out=$(passwd "${OPT_USER_NAME}")
+			user_id=$(getent passwd | grep -A 0 -w -F "${OPT_USER_NAME}" | awk -F ':' '{print $3;}' 2>/dev/null)
+			if [[ -n "${user_id}" ]]; then
+				printgreen "Se crea el usuario "
+				printyellow "${OPT_USER_NAME}"
+				printgreen " con ID "
+				printyellow "${user_id}"
+				echo
+			else
+				printred "No se pudo crear el usuario "
+				printyellow "${OPT_USER_NAME}"
+				echo
+				exit 1
+			fi
+		fi
+		# check if user belongs to group
+		#str_out=$(groups "${OPT_USER_NAME}" | grep -A 0 -w -F "${OPT_GROUP_NAME}" 2>/dev/null) # PRIMARY INCLUDES THE USER
+		str_out=$(id -nG "${OPT_USER_NAME}" | grep -A 0 -w -F "${OPT_GROUP_NAME}" 2>/dev/null) # IT'S WORKING!!
+		if [[ -z "${str_out}" ]]; then
+			# user does not belong to group
+			# to grant the user additional permissions
+			# can add users to existing groups like
+			# root for administrative privileges
+			str_out=$(gpasswd -a "${OPT_USER_NAME}" "${OPT_GROUP_NAME}" 2>&1)
+			str_out=$(echo "${str_out}" | sed "s|Adding user ${OPT_USER_NAME} to group ${OPT_GROUP_NAME}||g")
+			str_out=$(usermod -aG "${OPT_GROUP_NAME}" "${OPT_USER_NAME}" 2>&1)
+			if [[ -z "${str_out}" ]]; then
+				printgreen "Se agrega el usuario "
+				printyellow "${OPT_USER_NAME}"
+				printgreen " al grupo "
+				printyellow "${OPT_GROUP_NAME}"
+				echo
+			else
+				printred "No se pudo agregar el usuario "
+				printyellow "${OPT_USER_NAME}"
+				printred " al grupo "
+				printyellow "${OPT_GROUP_NAME}"
+				echo
+				exit 1
+			fi
+		else
+			printgreen "Usuario "
+			printyellow "${OPT_USER_NAME}"
+			printgreen " ya pertenece al grupo "
+			printyellow "${OPT_GROUP_NAME}"
+			echo
+		fi
+	fi
+	# process the file and permissions (not symbolic links)
+	printblue "ACERCA DEL ARCHIVO "
+	printyellow "${FILE_REAL_PATH}"
+	echo
+	printblue "Para el usuario "
+	printyellow "${OPT_USER_NAME}"
+	printblue " y grupo "
+	printyellow "${OPT_GROUP_NAME}"
+	echo
+	# macOS DOES NOT have the -c option to return if a change was made or not
+	if [[ "${os_name}" == "Darwin" ]]; then
+		str_out=$(chown -RHL "${OPT_USER_NAME}:${OPT_GROUP_NAME}" "${FILE_INPUT_STR}" 2>/dev/null)
+		if [[ $? -eq 0 ]]; then
+			printgreen "Se modifica la pertenencia del archivo"
+			echo
+		else
+			printred "No se pudo modificar la pertenencia del archivo"
+			echo
+		fi
+		str_out=$(chmod -RHL 740 "${FILE_INPUT_STR}" 2>/dev/null)
+		if [[ $? -eq 0 ]]; then
+			printgreen "Se modifican los permisos del archivo"
+			echo
+		else
+			printred "No se pudo modificar los permisos del archivo"
+			echo
+		fi
+	else
+		str_out=$(chown -cRHL "${OPT_USER_NAME}:${OPT_GROUP_NAME}" "${FILE_INPUT_STR}" 2>/dev/null)
+		if [[ $? -eq 0 ]]; then
+			if [[ -z "${str_out}" ]]; then
+				printgreen "Usuario y grupo ya son dueños del archivo"
+				echo
+			else
+				printgreen "Se modifica la pertenencia del archivo"
+				echo
+			fi
+		else
+			printred "No se pudo modificar la pertenencia del archivo"
+			echo
+		fi
+		str_out=$(chmod -cRHL 740 "${FILE_INPUT_STR}" 2>/dev/null)
+		if [[ $? -eq 0 ]]; then
+			if [[ -z "${str_out}" ]]; then
+				printgreen "Usuario y grupo ya tienen los permisos"
+				echo
+			else
+				printgreen "Se modifican los permisos del archivo"
+				echo
+			fi
+		else
+			printred "No se pudo modificar los permisos del archivo"
+			echo
+		fi
+	fi
+	shopt -u nocasematch # disable case-insensitive
+}
+
+function print_real_user() {
+	printblue "Usuario de la sesion: "
+	printgreen "${USER_REAL_NAME}"
+	echo
+	#echo "${USER_REAL_NAME}"
+}
+
+function print_exec_user() {
+	printblue "Usuario que ejecuta : "
+	#printgreen "${USER_EXEC_NAME}"
+	#echo
+	echo "${USER_EXEC_NAME}"
+}
+
+function print_exec_script() {
+	printblue "El comando ingresado: "
+	#printgreen "$0 $@" # BUG: as array only prints the first argument
+	echo "$0 $@"
+}
+
+function set_real_script() {
+	SCRIPT_REAL_PATH="$1"
+	if [[ "$0" == "bash" ]]; then
+		# this happens only when the function is called by sudo
+		# in order to access SCRIPT_REAL_PATH from environment vars
+		# one way is to use the -E option by sudo, otherwise
+		# it requires to receive the script name or path as first argument.
+		SCRIPT_REAL_PATH=$(echo "$@" | awk -F ' ' '{print $1;}')
+	fi
+	if [[ -n "$(command -v realpath 2>/dev/null)" ]]; then
+		# Linux only
+		# next line gets the real full path of the script being executed
+		#SCRIPT_REAL_PATH=$(realpath "${SCRIPT_REAL_PATH}")
+		SCRIPT_REAL_PATH=$(realpath "${SCRIPT_REAL_PATH}")
+	else
+		# Linux & macOS
+		# resolves symbolic links recursively until is no longer a symlink
+		while [ -L "${SCRIPT_REAL_PATH}" ]; do
+			# get symlink directory
+			# current directory where i am executing from
+			SCRIPT_EXEC_DIR="$(cd -P "$(dirname "${SCRIPT_REAL_PATH}")" >/dev/null 2>&1 && pwd)"
+			# readlink gets the resolved real path (in case of symbolic link)
+			SCRIPT_REAL_PATH=$(readlink "${SCRIPT_REAL_PATH}")
+			# resolved real path can be relative or absolute
+			# check if candidate path is relative
+			if [[ "${SCRIPT_REAL_PATH}" != /* ]]; then
+				# if candidate path is relative, resolve to full path
+				# regular expression with / at the beginning means is an absolute symlink or real path
+				# set the next working source path to resolve its real path
+				SCRIPT_REAL_PATH="${SCRIPT_EXEC_DIR}/${SCRIPT_REAL_PATH}"
+			fi
+		done
+	fi
+	# next line gets the real directory of the script being executed
+	# get final script directory path from fully resolved source path
+	SCRIPT_REAL_DIR="$(cd -P "$(dirname "${SCRIPT_REAL_PATH}")" >/dev/null 2>&1 && pwd)"
+	# next line gets the real file name of the script being executed
+	# To prevent issues related to slashes in path
+	# Must change DELIMITER for sed command
+	# | is used instead of the default /
+	# SCRIPT_REAL_NAME=$(echo "${SCRIPT_REAL_PATH}" | sed 's/${SCRIPT_REAL_DIR}\///g') # NOT WORKING
+	# SCRIPT_REAL_NAME=$(echo "${SCRIPT_REAL_PATH}" | sed -n "s|${SCRIPT_REAL_DIR}\/||p") # Linux only
+	SCRIPT_REAL_NAME=$(echo "${SCRIPT_REAL_PATH}" | sed "s|^.*\/\\(.*\\)|\\1|g") # Linux & macOS
+	# next line gets the real full path of the script being executed
+	SCRIPT_REAL_PATH="${SCRIPT_REAL_DIR}/${SCRIPT_REAL_NAME}" # Fix if not using realpath
+	# next line gets the directory where the script is being executed from
+	if [[ -n "$(command -v pwd 2>/dev/null)" ]]; then
+		SCRIPT_EXEC_DIR=$(pwd)
+	fi
+	# export by the child DO NOT modifies the parent environment.
+	# export SCRIPT_REAL_PATH
+	#echo "SCRIPT_EXEC_DIR --> '${SCRIPT_EXEC_DIR}'"
+	#echo "SCRIPT_REAL_DIR --> '${SCRIPT_REAL_DIR}'"
+	#echo "SCRIPT_REAL_NAME --> '${SCRIPT_REAL_NAME}'"
+	#echo "SCRIPT_REAL_PATH --> '${SCRIPT_REAL_PATH}'"
+}
+
+function print_real_script() {
+	printblue "El comando procesado: "
+	printgreen "${SCRIPT_REAL_DIR}/${SCRIPT_REAL_NAME} ${OPT_USER_NAME} ${OPT_GROUP_NAME} ${FILE_REAL_PATH}"
+	echo
+}
+
+function print_usage() {
+	printblue "Uso del comando, ej.: "
+	printyellow "${SCRIPT_REAL_NAME} usuario grupo [/ruta/]archivo"
+	echo
+}
+
+function print_help() {
+	echo
+	printgreen "AYUDA"
+	echo
+	print_usage
+	printblue "NOMBRE:"
+	echo
+	printyellow "\t${SCRIPT_REAL_NAME}"
+	printgreen " asigna a usuario y grupo permisos de un archivo."
+	echo
+	printblue "OPCIONES:"
+	echo
+	printyellow "\tusuario"
+	echo
+	printgreen "\tUsuario que requiere permisos para el archivo."
+	#printblue " Default:"
+	#printyellow " user"
+	echo
+	printyellow "\tgrupo"
+	echo
+	printgreen "\tGrupo al que se asigna permisos y el usuario."
+	#printblue " Default:"
+	#printyellow " group"
+	echo
+	printyellow "\tarchivo"
+	echo
+	printgreen "\tArchivo del sistema que requiere permisos."
+	#printblue " Default:"
+	#printyellow " file"
+	echo
+}
+
+function get_opt_arguments() {
+	if [[ $# -lt 3 ]]; then
+		printred "Faltan datos en los argumentos del script."
+		print_help
+		exit 1
+	fi
+	# regular expression to validate user names & group names
+	local regex_names="^[A-Za-z0-9\_\\-]+$"
+	# argument and value for user name
+	OPT_USER_NAME="$1"
+	if [[ ! "${OPT_USER_NAME}" =~ $regex_names ]]; then
+		printred "Usuario solo acepta letras, numeros, guion -, y guion bajo _"
+		print_help
+		exit 1
+	fi
+	# argument and value for group name
+	OPT_GROUP_NAME="$2"
+	if [[ ! "${OPT_GROUP_NAME}" =~ $regex_names ]]; then
+		printred "Grupo solo acepta letras, numeros, guion -, y guion bajo _"
+		print_help
+		exit 1
+	fi
+	# shift N : unset N arguments from the array
+	# starting on the position of current argument
+	shift 2 # 1 for user and 1 for group
+	# look if a file exists between pending arguments
+	while [[ "$#" -gt 0 ]]; do
+		if [[ -f "$1" ]]; then
+			FILE_INPUT_STR="$1"
+			shift # shift acts as shift 1
+			break
+		fi
+		shift # shift acts as shift 1
+	done
+	if [[ -z "${FILE_INPUT_STR}" ]]; then
+		printred "No existe ningun archivo indicado en los argumentos"
+		print_help
+		exit 1
+	fi
+	#echo "OPT_USER_NAME --> '${OPT_USER_NAME}'"
+	#echo "OPT_GROUP_NAME --> '${OPT_GROUP_NAME}'"
+	#echo "FILE_INPUT_STR --> '${FILE_INPUT_STR}'"
+}
+
+function set_real_file() {
+	FILE_REAL_PATH="$1"
+	if [[ "$0" == "bash" ]]; then
+		# this happens only when the function is called by sudo
+		# in order to access FILE_REAL_PATH from environment vars
+		# one way is to use the -E option by sudo, otherwise
+		# it requires to receive the script name or path as first argument.
+		FILE_REAL_PATH=$(echo "$@" | awk -F ' ' '{print $1;}')
+	fi
+	if [[ -n "$(command -v realpath 2>/dev/null)" ]]; then
+		# Linux only
+		# next line gets the real full path of the script being executed
+		#FILE_REAL_PATH=$(realpath "${FILE_REAL_PATH}")
+		FILE_REAL_PATH=$(realpath "${FILE_REAL_PATH}")
+	else
+		# Linux & macOS
+		# resolves symbolic links recursively until is no longer a symlink
+		while [ -L "${FILE_REAL_PATH}" ]; do
+			# get symlink directory
+			# current directory where i am executing from
+			FILE_EXEC_DIR="$(cd -P "$(dirname "${FILE_REAL_PATH}")" >/dev/null 2>&1 && pwd)"
+			# readlink gets the resolved real path (in case of symbolic link)
+			FILE_REAL_PATH=$(readlink "${FILE_REAL_PATH}")
+			# resolved real path can be relative or absolute
+			# check if candidate path is relative
+			if [[ "${FILE_REAL_PATH}" != /* ]]; then
+				# if candidate path is relative, resolve to full path
+				# regular expression with / at the beginning means is an absolute symlink or real path
+				# set the next working source path to resolve its real path
+				FILE_REAL_PATH="${FILE_EXEC_DIR}/${FILE_REAL_PATH}"
+			fi
+		done
+	fi
+	# next line gets the real directory of the script being executed
+	# get final script directory path from fully resolved source path
+	FILE_REAL_DIR="$(cd -P "$(dirname "${FILE_REAL_PATH}")" >/dev/null 2>&1 && pwd)"
+	# next line gets the real file name of the script being executed
+	# To prevent issues related to slashes in path
+	# Must change DELIMITER for sed command
+	# | is used instead of the default /
+	# FILE_REAL_NAME=$(echo "${FILE_REAL_PATH}" | sed 's/${FILE_REAL_DIR}\///g') # NOT WORKING
+	# FILE_REAL_NAME=$(echo "${FILE_REAL_PATH}" | sed -n "s|${FILE_REAL_DIR}\/||p") # Linux only
+	FILE_REAL_NAME=$(echo "${FILE_REAL_PATH}" | sed "s|^.*\/\\(.*\\)|\\1|g") # Linux & macOS
+	# next line gets the real full path of the script being executed
+	FILE_REAL_PATH="${FILE_REAL_DIR}/${FILE_REAL_NAME}" # Fix if not using realpath
+	# next line gets the directory where the script is being executed from
+	if [[ -n "$(command -v pwd 2>/dev/null)" ]]; then
+		FILE_EXEC_DIR=$(pwd)
+	fi
+	# export by the child DO NOT modifies the parent environment.
+	# export FILE_REAL_PATH
+}
+
+function sudo_su {
+	local commandName="$1"
+	local commandArgs="$@"
+	#echo "\$0 --> '$0'"
+	#echo "\$# --> '$#'"
+	#echo "\$@ --> '$@'"
+	#echo "\${commandName} --> ${commandName}"
+	#echo "\${commandArgs} --> ${commandArgs}"
+	#echo "type of '${commandName}' is '$(type -t "${commandName}")'"
+	# type -t returns 'function', 'file', 'alias', etc, when exists
+	# other types as file, alias, etc, NOT being detected in macOS
+	if [[ "$(type -t "${commandName}")" == "function" ]]; then
+		# deletes the function name from arguments
+		#commandArgs=$(echo "$@" | sed "s|${commandName} ||g")
+		# includes the original script name in arguments
+		# replacing the function name for the script name
+		commandArgs=$(echo "$@" | sed "s|${commandName}|$0|g")
+		# This way to call a function works as an independent child.
+		# When a child script is executed, it runs as a separate process.
+		# It receives a copy of the parent's environment variables.
+		# This means that has its own independent set of variables.
+		# DOES NOT work to update global variables to the parent.
+		# By default, sudo resets the environment for security reasons.
+		# -E preserve the user's environment, including exported variables.
+		# -E allows to the function access exported variables from the parent.
+		# The export command makes a variable available to child processes,
+		# but it does not enable childs to modify the environment of its parent.
+		command sudo -E bash -c "$(declare -f "${commandName}");${commandName} ${commandArgs}"
+	else
+		# BE SURE to send $@ instead of $*, if not, $# will count always 1
+		# because sudo takes $* as a whole string, meanwhile $@ is an array
+		# ALSO, escape script path with "" because espaces and slashes
+		#sudo -E $@ # BUG with spaces --> sudo : command not found
+		# shift N : unset N arguments from the array
+		# starting on the position of current argument
+		# unset ${commandName} from $@, only the first
+		shift # shift acts as shift 1
+		sudo -E "${commandName}" "$@"
+	fi
+}
+
+print_real_user
+# when root executes a function by sudo
+# DOES NOT modify global vars of parent
+# runs independent with his own environment
+# better runs the whole script as root
+#sudo_su set_real_script "$@"
+set_real_script "$0" "$@"
+get_opt_arguments "$@"
+
+print_exec_user
+print_exec_script "$@"
+set_real_file "${FILE_INPUT_STR}"
+print_real_script "$@"
+
+if [[ $(($EUID)) -eq 0 ]]; then
+	# if root
+	main_process "$@"
+else
+	# not root
+	printyellow "Este script require permisos de "
+	echo "root"
+	sudo_su "$0" "$@"
+fi
+exit 0

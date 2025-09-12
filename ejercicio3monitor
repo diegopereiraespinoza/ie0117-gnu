@@ -1,0 +1,230 @@
+#!/bin/bash
+
+# Script for a service that monitors changes in a directory
+# Tested on: Arch Linux | Linux Mint
+# Author: Diego Pereira Espinoza
+# Date: 2025-09-08
+
+# stores the script arguments for sudo execution (NOT symbolic links)
+# declares a variable as available for exporting 
+# outside the environment of the script itself
+#declare -x SCRIPT_REAL_PATH="${BASH_SOURCE[0]}"
+declare -x SCRIPT_REAL_PATH
+declare -x SCRIPT_REAL_DIR
+declare -x SCRIPT_REAL_NAME
+declare -x SCRIPT_EXEC_DIR
+# export allows to be accessible by child processes
+# scripts and functions launched from the current shell
+# environment variables are passed down to child processes, not up to parent
+# exporting a variable in a child will not make it available to the parent
+# export IS NOT necessary, declare -x is sufficient
+# export SCRIPT_REAL_PATH
+
+# switch user identities within the session
+declare -x USER_REAL_NAME
+declare -x USER_EXEC_NAME
+
+#if [[ -f "/usr/bin/clear" ]]; then
+if [[ -n "$(command -v clear2 2>/dev/null)" ]]; then
+	clear
+fi
+
+if [[ -n "$(command -v logname 2>/dev/null)" ]]; then
+	USER_REAL_NAME=`logname`
+fi
+
+if [[ -n "$(command -v whoami 2>/dev/null)" ]]; then
+	USER_EXEC_NAME=`whoami`
+fi
+
+printred() {
+  printf "\e[1;31m${1}\e[0m"
+}
+printgreen() {
+  printf "\e[1;32m${1}\e[0m"
+}
+printyellow() {
+  printf "\e[1;33m${1}\e[0m"
+}
+printblue() {
+  printf "\e[1;34m${1}\e[0m"
+}
+printpurple() {
+  printf "\e[1;35m${1}\e[0m"
+}
+
+function main_process() {
+	# Darwin for macOS / Linux for GNU
+	# grep -A 0 -w -F
+	# -A 0, returns only the first line
+	# -w, matches only complete words
+	# -F, fixed strings not regular expressions
+	local os_name=$(uname -s)
+	# define the directory to watch
+	local dir="/home/${USER_REAL_NAME}/Desktop"
+	# only for macOS
+	if [[ "${os_name}" == "Darwin" ]]; then
+		dir="/Users/${USER_REAL_NAME}/Desktop"
+	fi
+	# -d, runs in background as daemon, but neeeds an output file to log events
+	# -m, runs in foreground indefinitely. Default is to exit after first event
+	# -r, watches all subdirectories, but beware that may take a while
+	# -s, --syslog erros to system log module rather than standard stderr
+	# -c, --csv outputs in CSV format useful when split because spaces
+	# -o, --outfile outputs events to a file rather than standard stdout
+	# define the output file for events
+	local file="/home/${USER_REAL_NAME}/Downloads/inotify_events.csv"
+	# only for macOS
+	if [[ "${os_name}" == "Darwin" ]]; then
+		file="/Users/${USER}/Downloads/inotify_events.csv"
+	fi
+	# be sure that output file exists
+	# be care of not saving on same watching directory
+	# because the modify event is trigger indefinitely
+	# and the output file size will increases a lot
+	touch "${file}"
+	# format for the timestamp in the output
+	# --timefmt cannot be specified without --format
+	local timefmt="%Y-%m-%d_%H.%M.%S"
+	# -c and --format cannot both be specified
+	# %T, formatted timestamp
+	# %e, event names (CREATE, MODIFY, DELETE)
+	# %w, watched file or directory
+	# %f, filename that caused the event
+	local format=""
+	# define the type of events to watch for
+	local events="create,modify,delete"
+	# BACKGROUND: DAEMON WITH OUTPUT FILE (CSV)
+	# DOES NOT WORK TO START THE SERVICE
+	#format="\"%T\",\"%_e\",\"%w\",\"%f\""
+	#inotifywait -drs -o "${file}" --timefmt "${timefmt}" --format "${format}" -e "${events}" "${dir}" | while read -r timestr nbsp events nbsp path nbsp filename
+	# FOREGROUND: MONITOR WITH OUTPUT FILE (CSV)
+	# USING THIS TO START THE SERVICE
+	#format="\"%T\",\"%_e\",\"%w\",\"%f\""
+	#inotifywait -mrs -o "${file}" --timefmt "${timefmt}" --format "${format}" -e "${events}" "${dir}" | while read -r timestr nbsp events nbsp path nbsp filename
+	# FOREGROUND: MONITOR IN TERMINAL (REALTIME)
+	# USING THIS TO SEE IN TERMINAL
+	format="\"%T\" , \"%_e\" , \"%w\" , \"%f\""
+	inotifywait -mrs --timefmt "${timefmt}" --format "${format}" -e "${events}" "${dir}" | while read -r timestr nbsp events nbsp path nbsp filename
+	do
+	timestr=$(echo "${timestr}" | sed "s|^[\ \t]*\"||g;s|\"[\ \t]*$||g" | awk '{print $0;}')
+	#events=$(echo "${events}" | sed "s|^[\ \t]*\"||g;s|\"[\ \t]*$||g" | awk -F '_' '{print $0;}')
+	events=$(echo "${events}" | sed "s|^[\ \t]*\"||g;s|\"[\ \t]*$||g" | awk '{print $0;}')
+	path=$(echo "${path}" | sed "s|^[\ \t]*\"||g;s|\"[\ \t]*$||g" | awk '{print $0;}')
+	filename=$(echo "${filename}" | sed "s|^[\ \t]*\"||g;s|\"[\ \t]*$||g" | awk '{print $0;}')
+	#echo "Eventos: ${events} en ${path}${filename}"
+	case "${events}" in
+	CREATE_ISDIR)
+		echo "${timestr},Directorio_Creado,\"${path}\",\"${filename}\""
+	;;
+	CREATE)
+		echo "${timestr},Archivo_Creado,\"${path}\",\"${filename}\""
+	;;
+	MODIFY)
+		echo "${timestr},Archivo_Modificado,\"${path}\",\"${filename}\""
+	;;
+	DELETE_ISDIR)
+		echo "${timestr},Directorio_Eliminado,\"${path}\",\"${filename}\""
+	;;
+	DELETE)
+		echo "${timestr},Archivo_Eliminado,\"${path}\",\"${filename}\""
+	;;
+	ISDIR)
+		echo ",Directorio,,"
+	;;
+	ISFILE)
+		echo ",Archivo,,"
+	;;
+	*)
+		echo ",Desconocido,,"
+	;;
+	esac
+	done
+}
+
+function print_real_user() {
+	printblue "Usuario de la sesion: "
+	printgreen "${USER_REAL_NAME}"
+	echo
+	#echo "${USER_REAL_NAME}"
+}
+
+function print_exec_user() {
+	printblue "Usuario que ejecuta : "
+	#printgreen "${USER_EXEC_NAME}"
+	#echo
+	echo "${USER_EXEC_NAME}"
+}
+
+function print_exec_script() {
+	printblue "El comando ingresado: "
+	#printgreen "$0 $@" # BUG: as array only prints the first argument
+	echo "$0 $@"
+}
+
+function set_real_script() {
+	#echo "\$0 --> '$0'"
+	#echo "\$# --> '$#'"
+	#echo "\$1 --> '$1'"
+	#echo "\$@ --> '$@'"
+	SCRIPT_REAL_PATH="$1"
+	if [[ -n "$(command -v realpath 2>/dev/null)" ]]; then
+		# Linux only
+		# next line gets the real full path of the script being executed
+		#SCRIPT_REAL_PATH=$(realpath "${SCRIPT_REAL_PATH}")
+		SCRIPT_REAL_PATH=$(realpath "${SCRIPT_REAL_PATH}")
+	else
+		# Linux & macOS
+		# resolves symbolic links recursively until is no longer a symlink
+		while [ -L "${SCRIPT_REAL_PATH}" ]; do
+			# get symlink directory
+			# current directory where i am executing from
+			SCRIPT_EXEC_DIR="$(cd -P "$(dirname "${SCRIPT_REAL_PATH}")" >/dev/null 2>&1 && pwd)"
+			# readlink gets the resolved real path (in case of symbolic link)
+			SCRIPT_REAL_PATH=$(readlink "${SCRIPT_REAL_PATH}")
+			# resolved real path can be relative or absolute
+			# check if candidate path is relative
+			if [[ "${SCRIPT_REAL_PATH}" != /* ]]; then
+				# if candidate path is relative, resolve to full path
+				# regular expression with / at the beginning means is an absolute symlink or real path
+				# set the next working source path to resolve its real path
+				SCRIPT_REAL_PATH="${SCRIPT_EXEC_DIR}/${SCRIPT_REAL_PATH}"
+			fi
+		done
+	fi
+	# next line gets the real directory of the script being executed
+	# get final script directory path from fully resolved source path
+	SCRIPT_REAL_DIR="$(cd -P "$(dirname "${SCRIPT_REAL_PATH}")" >/dev/null 2>&1 && pwd)"
+	# next line gets the real file name of the script being executed
+	# To prevent issues related to slashes in path
+	# Must change DELIMITER for sed command
+	# | is used instead of the default /
+	# SCRIPT_REAL_NAME=$(echo "${SCRIPT_REAL_PATH}" | sed 's/${SCRIPT_REAL_DIR}\///g') # NOT WORKING
+	# SCRIPT_REAL_NAME=$(echo "${SCRIPT_REAL_PATH}" | sed -n "s|${SCRIPT_REAL_DIR}\/||p") # Linux only
+	SCRIPT_REAL_NAME=$(echo "${SCRIPT_REAL_PATH}" | sed "s|^.*\/\\(.*\\)|\\1|g") # Linux & macOS
+	# next line gets the real full path of the script being executed
+	SCRIPT_REAL_PATH="${SCRIPT_REAL_DIR}/${SCRIPT_REAL_NAME}" # Fix if not using realpath
+	# next line gets the directory where the script is being executed from
+	if [[ -n "$(command -v pwd 2>/dev/null)" ]]; then
+		SCRIPT_EXEC_DIR=$(pwd)
+	fi
+	# export by the child DO NOT modifies the parent environment.
+	# export SCRIPT_REAL_PATH
+}
+
+function print_real_script() {
+	printblue "El comando procesado: "
+	printgreen "${SCRIPT_REAL_DIR}/${SCRIPT_REAL_NAME}"
+	echo
+}
+
+print_real_user
+set_real_script "$0" "$@"
+
+print_exec_user
+print_exec_script "$@"
+print_real_script "$@"
+
+main_process "$@"
+
+exit 0

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Starts a service that monitors changes in a directory
+# Tested on: Arch Linux | Linux Mint
+# Author: Diego Pereira Espinoza
+# Date: 2025-09-08
+
+# inotifywait is a command-line utility from the inotify-tools package
+# so needs to install inotify-tools
+# Arch Linux
+#pacman -S inotify-tools
+# Debian Ubuntu Mint
+#apt install inotify-tools
+# Red Hat CentOS Fedora
+#yum install inotify-tools
+# Fedora RHEL newer versions
+#dnf install inotify-tools
+# openSUSE
+#zypper install inotify-tools
+
+cp -fRHL ejercicio3daemon /tmp/
+#cp -fRHL ejercicio3.service /etc/systemd/system/
+cp -fRHL ejercicio3.service /usr/lib/systemd/system/
+ln -s /usr/lib/systemd/system/ejercicio3.service /etc/systemd/system/ejercicio3.service
+systemctl daemon-reload
+#systemctl start ejercicio3.service
+systemctl restart ejercicio3
+exit 0

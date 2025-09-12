@@ -1,0 +1,14 @@
+[Unit]
+Description=Servicio de Monitoreo de Cambios en Directorios
+#After=network.target  # Ensures network is available before starting
+
+[Service]
+ExecStart=/tmp/ejercicio3daemon  # Command to start the service
+#Restart=on-failure  # on-failure/always Restart if the service exits
+#User=your_username  # User to run the service as (optional, but recommended)
+#Group=your_groupname # Group to run the service as (optional)
+#WorkingDirectory=/path/to/your/project # Working directory for the service (optional)
+
+[Install]
+#WantedBy=multi-user.target  # Specifies the target for enabling the service
+#Alias=ejercicio3.service
