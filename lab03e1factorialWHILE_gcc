@@ -1,0 +1,3 @@
+#!/bin/bash
+gcc lab03e1factorialWHILE.c -Wall -lm -o lab03e1factorialWHILE
+exit 0
