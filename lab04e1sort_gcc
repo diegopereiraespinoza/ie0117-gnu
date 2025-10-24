@@ -1,0 +1,4 @@
+#!/bin/bash
+gcc lab04e1sort.c -o lab04e1sort -Wall -lm
+./lab04e1sort "$@"
+exit 0

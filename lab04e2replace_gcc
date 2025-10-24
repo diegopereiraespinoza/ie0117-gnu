@@ -1,0 +1,72 @@
+#!/bin/bash
+# Debugging:
+# -g produce debugging information in the OS native format (stabs, COFF, XCOFF, DWARF)
+# -g enables use of extra debugging information that only GDB can use
+# -g probably makes other debuggers crash or refuse to read the program
+# others:
+# -ggdb produce debugging information for use by GDB, the most expressive format available (DWARF, stabs, or native)
+# -gdwarf produce debugging information in DWARF format
+# -gbtf | -gprune-btf produce debugging information for BTF, the default format for eBPF
+# -gctf produce debugging information for CTF
+# -gcodeview produce debugging information for CodeView by Microsoft Visual C++ in Windows
+# -gvms produce debugging information for Alpha/VMS
+# -g[0|1|2|3] | -ggdb[0|1|2|3] | -gvms[0|1|2|3]
+# where information level is -g1=minimal, -g2=default, -g3=extra
+# -g0=no info at all, -g0 negates -g, no makes sense including -g0
+# Optimization:
+# -O[0|1|2|3|fast|s|z|g]
+# -O0 default, reduce compilation time while debugging produce the expected results
+# -O1 optimizing compilation takes somewhat more time, and a lot more memory for a large function
+# -O2 optimize even more, increases compilation time and performance of the generated code
+# -O3 optimize yet more, -O2 plus some other extra flags
+# -Ofast enables all -O3 optimizations disregarding strict standards compliance
+# -Os enables all -O2 optimizations except flags that increase code size
+# -Oz optimize aggressively for size rather that speed, similar to -Os
+# -Og optimize for debugging better than -O0 collecting debug information
+# Warnings:
+# -Wall enables warnings about questionable constructions
+# -Wextra enables extra flags not in -Wall, used to be called -W
+gcc lab04e2replace.c -o lab04e2replace -g -O0 -Wall -lm
+#if [[ -n "$(command -v gdb 2>/dev/null)" ]]; then
+#	gdb ./lab04e2replace
+#fi
+# --tool=memcheck(default)|cachegrind|callgrind|helgrind|drd|massif|dhat|lackey|none|exp-bbv|...
+# --tool=memcheck: Specifies the memcheck tool, which is the default and used for detecting memory errors and leaks.
+# --leak-check=no|summary(default)|yes|full
+# --leak-check=full: Instructs Valgrind to perform a thorough memory leak check and report full details of any leaks found.
+# --track-origin=yes|no(default)
+# --track-origin=yes memcheck will try to show the origin of uninitialized values
+# --undef-value-errors=yes(default)|no
+# --undef-value-errors=no with memcheck is like functioned addrcheck removed in valgrind 3.1.0
+# --show-leak-kinds=none|definite|indirect|possible|reachable|all
+# --show-leak-kinds=definite,possible are default equivalent to having together --show-reachable=no --show-possibly-lost=yes
+# --show-leak-kinds=definite is equivalent to having together --show-reachable=no --show-possibly-lost=no
+# --show-leak-kinds=all is equivalent to having --show-reachable=yes
+# --show-possibly-lost=no has no effect if specified --show-reachable=yes
+# --errors-for-leak-kinds=none|definite|indirect|possible|reachable|all
+# --errors-for-leak-kinds=definite,possible are default, similar to --show-leak-kinds
+# --leak-check-heuristics=none|stdstring|length64|newarray|multipleinheritance|all(default)
+# --leak-resolution=low|med|high(default)
+# --leak-resolution does not affect memcheck's ability to find leaks, only changes how results are shown
+# --leak-resolution consider merging different leaks into a single leak report
+# --leak-resolution=low only the first 2 entries need to match
+# --leak-resolution=med 4 entries have to match
+# --leak-resolution=high all entries need to match
+# For hardcore leak debugging, you probably want to use some such large number
+# --leak-resolution=high --num-callers=40
+# --vgdb=no|yes(default)|full
+# --vgdb=no DO NOT provide "gdbserver" functionality
+# DO NOT allow external GNU GDB debugger to control your program when running on valgrind
+# --vgdb-error=0|...|999999999(default number)
+# will wait for "number" errors to be reported before stop and wait for you to connect with GDB
+# --vgdb-stop-at=none(default)|startup|exit|abexit|valgrindabexit|all
+# --vgdb-stop-at=startup,exit,valgrindabexit invokes "gdbserver" before your program is executed
+# --vgdb-stop-at=abexit similar to exit but invokes "gdbserver" only when your program exits abnormally
+# --vgdb-stop-at=startup --vgdb-error=0 invokes "gdbserver" before your program is executed
+# but also, --vgdb-error=0 will cause your program to stop on all subsequent errors
+if [[ -n "$(command -v valgrind 2>/dev/null)" ]]; then
+	valgrind --tool=memcheck --leak-check=full ./lab04e2replace "$@"
+else
+	./lab04e2replace "$@"
+fi
+exit 0
