@@ -870,26 +870,35 @@ int main(int argc, char *argv[]) {
 	//system("clear"); // clear the terminal WORKING
 	char *word_old = malloc_mem("índice i");
 	char *word_new = malloc_mem("");
-	char *file_name_input = malloc_mem("");
-	char *file_name_temp = malloc_mem("lab04e2replace.c.txt");
+	char *file_name_input = malloc_mem(argv[0]);
+	int length = 1024;
+	char in_file_name[length] = {};
+	strcpy(&in_file_name[0], argv[0]);
+	//int in_file_len = strlen(in_file_name);
+	char in_file_ext[] = {'.', 'i', 'n', '.', 't', 'x', 't', '\0'};
+	int in_ext_len = strlen(in_file_ext);
+	for (int i = 0; i < in_ext_len; i++) {
+		strncat(in_file_name, &in_file_ext[i], 1);
+	}
+	file_name_input = ralloc_mem(&file_name_input, in_file_name);
+	char *file_name_temp = malloc_mem(argv[0]);
 	//printf("args %d\n", argc);
 	//for (int i = 0; i < argc; i++) printf("argv[%d] %s\n", i, argv[i]);
 	if (!values_from_args(argc, argv, &word_old, &word_new, &file_name_input)) {
 		free_all(&word_old, &word_new, &file_name_input, &file_name_temp);
 		return (EXIT_FAILURE); // terminate and return control to where is called from
 	}
-	int length = 1024;
-	char file_name[length] = {};
-	strcpy(&file_name[0], argv[0]);
-	//int file_len = strlen(file_name);
-	char ext_str[] = {'.', 't', 'x', 't', '\0'};
-	int ext_len = strlen(ext_str);
-	for (int i = 0; i < ext_len; i++) {
-		strncat(file_name, &ext_str[i], 1);
+	char out_file_name[length] = {};
+	strcpy(&out_file_name[0], argv[0]);
+	//int out_file_len = strlen(out_file_name);
+	char out_file_ext[] = {'.', 'o', 'u', 't', '.', 't', 'x', 't', '\0'};
+	int out_ext_len = strlen(out_file_ext);
+	for (int i = 0; i < out_ext_len; i++) {
+		strncat(out_file_name, &out_file_ext[i], 1);
 	}
-	//printf("name_len %d ext_len %d new_len %zd '%s'\n", file_len, ext_len, strlen(file_name), file_name);
-	file_name_temp = ralloc_mem(&file_name_temp, file_name);
-	//printf("name_len %d ext_len %d new_len %zd '%s'\n", file_len, ext_len, strlen(file_name_temp), file_name_temp);
+	//printf("name_len %d out_ext_len %d new_len %zd '%s'\n", out_file_len, out_ext_len, strlen(out_file_name), out_file_name);
+	file_name_temp = ralloc_mem(&file_name_temp, out_file_name);
+	//printf("name_len %d out_ext_len %d new_len %zd '%s'\n", out_file_len, out_ext_len, strlen(file_name_temp), file_name_temp);
 	//printf("'%s' '%s' '%s' '%s'\n", word_old, word_new, file_name_input, file_name_temp);
 	long double matches = 0;
 	long double words = get_by_line(word_old, word_new, &matches, file_name_input, file_name_temp);
