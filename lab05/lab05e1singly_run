@@ -1,0 +1,11 @@
+#!/bin/bash
+# compile and build
+make all # line 3
+# run with any arguments
+#./bin/lab05e1singly "$@" # line 5
+if [[ -n "$(command -v valgrind- 2>/dev/null)" ]]; then
+	valgrind --tool=memcheck --leak-check=full ./bin/lab05e1singly "$@"
+else
+	./bin/lab05e1singly "$@"
+fi
+exit 0 # line 6
