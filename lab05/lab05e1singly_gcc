@@ -1,0 +1,9 @@
+#!/bin/bash
+#gcc lab05e1singly_aio.c -o lab05e1singly -lm -Wall -Wextra -Wpedantic -std=gnu11 -g -O0
+gcc -Iinclude src/umath.c src/SNode.c src/slist.c src/sstack.c lab05e1singly.c -o lab05e1singly -lm -Wall -Wextra -Wpedantic -std=c11 -g -O0
+if [[ -n "$(command -v valgrind 2>/dev/null)" ]]; then
+	valgrind --tool=memcheck --leak-check=full ./lab05e1singly "$@"
+else
+	./lab05e1singly "$@"
+fi
+exit 0
