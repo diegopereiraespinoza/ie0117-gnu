@@ -1,0 +1,64 @@
+﻿// English Localization (L10n) for ja_* locales
+// i.e. LANG=ja_JP | setlocale(LC_ALL, "ja_JP.UTF-8");
+
+ja {
+	wdw_title           { "国際化" }
+	greeting            { "こんにちは！" }
+	farewell            { "さようなら！" }
+	welcome             { "いらっしゃいませ！" }
+	lbl_lang            { "言語" }
+	cmd_lang_root       { "選択" }
+	cmd_lang_ar         { "アラビア語" }
+	cmd_lang_de         { "ドイツ語" }
+	cmd_lang_en         { "英語" }
+	cmd_lang_es         { "スペイン語" }
+	cmd_lang_fr         { "フランス語" }
+	cmd_lang_hi         { "ヒンディー語" }
+	cmd_lang_ja         { "日本語" }
+	cmd_lang_ru         { "ロシア" }
+	cmd_lang_sr         { "セルビア語" }
+	cmd_lang_zh         { "中国語 CN" }
+	cmd_lang_zh_TW      { "中国語TW" }
+	nlangs              { "%d つの言語が利用可能です。" }
+	nlangs_plural       { "%d つの言語が利用可能です。" }
+	errorcodes {
+		"エラーなし",
+		"不正な引数が渡されました",
+		"不足しているリソース",
+		"フォーマットが無効です",
+		"ファイルアクセスエラー",
+		"内部プログラムエラー",
+		"メッセージ解析エラー",
+		"メモリ割り当てエラー",
+		"インデックス範囲外エラー",
+		"解析エラー",
+		"無効な文字が見つかりました",
+		"切り捨てられた文字が見つかりました",
+		"不正な文字が見つかりました",
+		"無効な表形式",
+		"無効なテーブルファイル",
+		"バッファオーバーフローエラー",
+		"サポートされていないエラー",
+		"リソースタイプの不一致",
+		"不正なエスケープシーケンス",
+		"サポートされていないエスケープシーケンス"
+	}
+	helpTopics {
+		udata           { "ヘルプトピック 'udata'" }
+		resourcebundles { "ヘルプトピック 'resourcebundles'" }
+		collation       { "ヘルプトピック 'collation'" }
+		breakit         { "ヘルプトピック 'breakiterator'" }
+		translit        { "ヘルプトピック 'transliteration'" }
+		unicode         { "ヘルプトピック 'unicode'" }
+		format          { "ヘルプトピック 'format'" }
+	}
+	helpKeywords {
+		udata           { "udata" }
+		resourcebundles { "resources" }
+		collation       { "collation" }
+		breakit         { "breakit" }
+		translit        { "transliteration" }
+		unicode         { "unicode" }
+		format          { "format" }
+	}
+}
