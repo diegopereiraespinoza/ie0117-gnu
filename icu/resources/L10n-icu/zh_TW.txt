@@ -1,0 +1,64 @@
+﻿// English Localization (L10n) for zh_TW locales
+// i.e. LANG=zh_TW | setlocale(LC_ALL, "zh_TW.UTF-8");
+
+zh_TW {
+	wdw_title           { "國際化" }
+	greeting            { "你好！" }
+	farewell            { "再見！" }
+	welcome             { "歡迎！" }
+	lbl_lang            { "語言" }
+	cmd_lang_root       { "選擇" }
+	cmd_lang_ar         { "阿拉伯" }
+	cmd_lang_de         { "德文" }
+	cmd_lang_en         { "英語" }
+	cmd_lang_es         { "西班牙語" }
+	cmd_lang_fr         { "法語" }
+	cmd_lang_hi         { "印地語" }
+	cmd_lang_ja         { "日本人" }
+	cmd_lang_ru         { "俄文" }
+	cmd_lang_sr         { "塞爾維亞" }
+	cmd_lang_zh         { "中國 CN" }
+	cmd_lang_zh_TW      { "中文 TW" }
+	nlangs              { "提供 %d 種語言。" }
+	nlangs_plural       { "提供 %d 種語言版本。" }
+	errorcodes {
+		"無錯誤",
+		"非法論點透過",
+		"缺少資源",
+		"格式無效",
+		"檔案存取錯誤",
+		"內部程式錯誤",
+		"訊息解析錯誤",
+		"記憶體分配錯誤",
+		"索引越界錯誤",
+		"解析錯誤",
+		"發現無效字符",
+		"發現截斷字符",
+		"發現非法字符",
+		"無效的表格格式",
+		"無效的表文件",
+		"緩衝區溢位錯誤",
+		"不支援的錯誤",
+		"資源類型不匹配",
+		"非法逃脫序列",
+		"不支援的轉義序列"
+	}
+	helpTopics {
+		udata           { "幫助主題 'udata'" }
+		resourcebundles { "幫助主題 'resourcebundles'" }
+		collation       { "幫助主題 'collation'" }
+		breakit         { "幫助主題 'breakiterator'" }
+		translit        { "幫助主題 'transliteration'" }
+		unicode         { "幫助主題 'unicode'" }
+		format          { "幫助主題 'format'" }
+	}
+	helpKeywords {
+		udata           { "udata" }
+		resourcebundles { "resources" }
+		collation       { "collation" }
+		breakit         { "breakit" }
+		translit        { "transliteration" }
+		unicode         { "unicode" }
+		format          { "format" }
+	}
+}

@@ -1,0 +1,64 @@
+// English Localization (L10n) for es_* locales
+// i.e. LANG=es_ES | setlocale(LC_ALL, "es_ES.UTF-8");
+
+es {
+	wdw_title           { "Internacionalización" }
+	greeting            { "¡Hola!" }
+	farewell            { "¡Adiós!" }
+	welcome             { "¡Bienvenido!" }
+	lbl_lang            { "Idioma" }
+	cmd_lang_root       { "Seleccionar" }
+	cmd_lang_ar         { "Árabe" }
+	cmd_lang_de         { "Alemán" }
+	cmd_lang_en         { "Inglés" }
+	cmd_lang_es         { "Español" }
+	cmd_lang_fr         { "Francés" }
+	cmd_lang_hi         { "Indú" }
+	cmd_lang_ja         { "Japonés" }
+	cmd_lang_ru         { "Ruso" }
+	cmd_lang_sr         { "Serbio" }
+	cmd_lang_zh         { "Chino CN" }
+	cmd_lang_zh_TW      { "Chino TW" }
+	nlangs              { "Hay %d idioma disponible." }
+	nlangs_plural       { "Hay %d idiomas disponibles." }
+	errorcodes {
+		"Ningún error",
+		"Argumento ilegal",
+		"Recurso no encontrado",
+		"Formato no válido",
+		"Error abriendo archivo",
+		"Error interno del programa",
+		"Error procesando mensaje",
+		"Error reservando memoria",
+		"Indice excede los límites",
+		"Error procesando texto",
+		"Símbolo no válido encontrado",
+		"Símbolo incompleto encontrado",
+		"Símbolo ilegal encontrado",
+		"Tabla de formatos no válida",
+		"Tabla de archivos no válida",
+		"Buffer excede los límites",
+		"Error no soportado",
+		"Tipo de recurso no coincide",
+		"Secuencia de escape es ilegal",
+		"Secuencia de escape no soportada"
+	}
+	helpTopics {
+		udata           { "Tema de ayuda para 'udata'" }
+		resourcebundles { "Tema de ayuda para 'resourcebundles'" }
+		collation       { "Tema de ayuda para 'collation'" }
+		breakit         { "Tema de ayuda para 'breakiterator'" }
+		translit        { "Tema de ayuda para 'transliteration'" }
+		unicode         { "Tema de ayuda para 'unicode'" }
+		format          { "Tema de ayuda para 'format'" }
+	}
+	helpKeywords {
+		udata           { "udata" }
+		resourcebundles { "resources" }
+		collation       { "collation" }
+		breakit         { "breakit" }
+		translit        { "transliteration" }
+		unicode         { "unicode" }
+		format          { "format" }
+	}
+}
