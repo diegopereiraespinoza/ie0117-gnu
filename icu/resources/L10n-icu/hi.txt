@@ -1,0 +1,64 @@
+// English Localization (L10n) for hi_* locales
+// i.e. LANG=hi_IN | setlocale(LC_ALL, "hi_IN.UTF-8");
+
+hi {
+	wdw_title           { "अंतर्राष्ट्रीयकरण" }
+	greeting            { "नमस्ते!" }
+	farewell            { "अलविदा!" }
+	welcome             { "स्वागत!" }
+	lbl_lang            { "भाषा" }
+	cmd_lang_root       { "चुनना" }
+	cmd_lang_ar         { "अरबी" }
+	cmd_lang_de         { "जर्मन" }
+	cmd_lang_en         { "अंग्रेज़ी" }
+	cmd_lang_es         { "स्पैनिश" }
+	cmd_lang_fr         { "फ्रेंच" }
+	cmd_lang_hi         { "हिंदी" }
+	cmd_lang_ja         { "जापानी" }
+	cmd_lang_ru         { "रूसी" }
+	cmd_lang_sr         { "सर्बियाई" }
+	cmd_lang_zh         { "चीनी सीएन" }
+	cmd_lang_zh_TW      { "चीनी TW" }
+	nlangs              { "%d भाषा उपलब्ध है।" }
+	nlangs_plural       { "%d भाषाएँ उपलब्ध हैं।" }
+	errorcodes {
+		"कोई त्रुटि नहीं",
+		"अवैध तर्क पारित",
+		"गुम संसाधन",
+		"फ़ॉर्मेट अमान्य है",
+		"फ़ाइल एक्सेस त्रुटि",
+		"आंतरिक प्रोग्राम त्रुटि",
+		"संदेश पार्स त्रुटि",
+		"मेमोरी आवंटन त्रुटि",
+		"इंडेक्स सीमा से बाहर त्रुटि",
+		"पार्स त्रुटि",
+		"अमान्य वर्ण मिला",
+		"कटा हुआ अक्षर मिला",
+		"अवैध चार पाया गया",
+		"अमान्य तालिका प्रारूप",
+		"अमान्य तालिका फ़ाइल",
+		"बफ़र ओवरफ़्लो त्रुटि",
+		"असमर्थित त्रुटि",
+		"संसाधन प्रकार बेमेल",
+		"अवैध भागने का क्रम",
+		"असमर्थित एस्केप अनुक्रम"
+	}
+	helpTopics {
+		udata           { "मदद के लिए विषय 'udata'" }
+		resourcebundles { "मदद के लिए विषय 'resourcebundles'" }
+		collation       { "मदद के लिए विषय 'collation'" }
+		breakit         { "मदद के लिए विषय 'breakiterator'" }
+		translit        { "मदद के लिए विषय 'transliteration'" }
+		unicode         { "मदद के लिए विषय 'unicode'" }
+		format          { "मदद के लिए विषय 'format'" }
+	}
+	helpKeywords {
+		udata           { "udata" }
+		resourcebundles { "resources" }
+		collation       { "collation" }
+		breakit         { "breakit" }
+		translit        { "transliteration" }
+		unicode         { "unicode" }
+		format          { "format" }
+	}
+}

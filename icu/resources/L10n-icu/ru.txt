@@ -1,0 +1,64 @@
+// English Localization (L10n) for ru_* locales
+// i.e. LANG=ru_RU | setlocale(LC_ALL, "ru_RU.UTF-8");
+
+ru {
+	wdw_title           { "Интернационализация" }
+	greeting            { "Привет!" }
+	farewell            { "До свидания!" }
+	welcome             { "Добро пожаловать!" }
+	lbl_lang            { "Язык" }
+	cmd_lang_root       { "Выбирать" }
+	cmd_lang_ar         { "арабский" }
+	cmd_lang_de         { "немецкий" }
+	cmd_lang_en         { "Английский" }
+	cmd_lang_es         { "испанский" }
+	cmd_lang_fr         { "Французский" }
+	cmd_lang_hi         { "хинди" }
+	cmd_lang_ja         { "японский" }
+	cmd_lang_ru         { "Русский" }
+	cmd_lang_sr         { "сербский" }
+	cmd_lang_zh         { "китайский CN" }
+	cmd_lang_zh_TW      { "Китайский ТВ" }
+	nlangs              { "Доступен %d ​​язык." }
+	nlangs_plural       { "Доступно %d языков." }
+	errorcodes {
+		"Ошибок нет",
+		"Незаконный аргумент принят",
+		"Отсутствующий ресурс",
+		"Неверный формат",
+		"Ошибка доступа к файлу",
+		"Внутренняя ошибка программы",
+		"Ошибка анализа сообщения",
+		"Ошибка распределения памяти",
+		"Ошибка выхода за пределы индекса",
+		"Ошибка анализа",
+		"Найден недопустимый символ",
+		"Найден усеченный символ",
+		"Найден незаконный символ",
+		"Неверный формат таблицы",
+		"Неверный файл таблицы",
+		"Ошибка переполнения буфера",
+		"Неподдерживаемая ошибка",
+		"Несоответствие типа ресурса",
+		"Незаконная последовательность выхода",
+		"Неподдерживаемая последовательность выхода"
+	}
+	helpTopics {
+		udata           { "Раздел помощи для 'udata'" }
+		resourcebundles { "Раздел помощи для 'resourcebundles'" }
+		collation       { "Раздел помощи для 'collation'" }
+		breakit         { "Раздел помощи для 'breakiterator'" }
+		translit        { "Раздел помощи для 'transliteration'" }
+		unicode         { "Раздел помощи для 'unicode'" }
+		format          { "Раздел помощи для 'format'" }
+	}
+	helpKeywords {
+		udata           { "udata" }
+		resourcebundles { "resources" }
+		collation       { "collation" }
+		breakit         { "breakit" }
+		translit        { "transliteration" }
+		unicode         { "unicode" }
+		format          { "format" }
+	}
+}

@@ -1,0 +1,64 @@
+// English Localization (L10n) for ar_* locales
+// i.e. LANG=ar_AE | setlocale(LC_ALL, "ar_AE.UTF-8");
+
+ar {
+	wdw_title           { "تدويل" }
+	greeting            { "مرحبًا!" }
+	farewell            { "مع السلامة!" }
+	welcome             { "مرحباً!" }
+	lbl_lang            { "لغة" }
+	cmd_lang_root       { "يختار" }
+	cmd_lang_ar         { "عربي" }
+	cmd_lang_de         { "الألمانية" }
+	cmd_lang_en         { "إنجليزي" }
+	cmd_lang_es         { "الأسبانية" }
+	cmd_lang_fr         { "فرنسي" }
+	cmd_lang_hi         { "الهندية" }
+	cmd_lang_ja         { "اليابانية" }
+	cmd_lang_ru         { "الروسية" }
+	cmd_lang_sr         { "الصربية" }
+	cmd_lang_zh         { "اللغة الصينية CN" }
+	cmd_lang_zh_TW      { "الصينية TW" }
+	nlangs              { "%d لغة متاحة." }
+	nlangs_plural       { "%d لغات متاحة." }
+	errorcodes {
+		"لا يوجد خطأ",
+		"تمت الموافقة على الحجة غير القانونية",
+		"مورد مفقود",
+		"التنسيق غير صالح",
+		"خطأ في الوصول إلى الملف",
+		"خطأ داخلي في البرنامج",
+		"خطأ في تحليل الرسالة",
+		"خطأ في تخصيص الذاكرة",
+		"خطأ خارج الحدود",
+		"خطأ التحليل",
+		"تم العثور على حرف غير صالح",
+		"تم العثور على حرف مقطوع",
+		"تم العثور على حرف غير قانوني",
+		"تنسيق الجدول غير صالح",
+		"ملف جدول غير صالح",
+		"خطأ تجاوز سعة المخزن المؤقت",
+		"خطأ غير مدعوم",
+		"عدم تطابق نوع المورد",
+		"سلسلة هروب غير قانونية",
+		"تسلسل الهروب غير المدعوم"
+	}
+	helpTopics {
+		udata           { "موضوع مساعدة ل 'udata'" }
+		resourcebundles { "موضوع مساعدة ل 'resourcebundles'" }
+		collation       { "موضوع مساعدة ل 'collation'" }
+		breakit         { "موضوع مساعدة ل 'breakiterator'" }
+		translit        { "موضوع مساعدة ل 'transliteration'" }
+		unicode         { "موضوع مساعدة ل 'unicode'" }
+		format          { "موضوع مساعدة ل 'format'" }
+	}
+	helpKeywords {
+		udata           { "udata" }
+		resourcebundles { "resources" }
+		collation       { "collation" }
+		breakit         { "breakit" }
+		translit        { "transliteration" }
+		unicode         { "unicode" }
+		format          { "format" }
+	}
+}
