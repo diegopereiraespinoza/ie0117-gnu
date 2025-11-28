@@ -1,0 +1,98 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-26 04:09-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: gt_gen.c:319
+msgid "Internationalization"
+msgstr "Internationalisierung"
+
+#: gt_gen.c:320
+msgid "Hello!"
+msgstr "Hallo!"
+
+#: gt_gen.c:321
+msgid "Goodbye!"
+msgstr "Auf Wiedersehen!"
+
+#: gt_gen.c:322
+msgid "Welcome!"
+msgstr "Willkommen!"
+
+#: gt_gen.c:323
+msgid "Language"
+msgstr "Sprache"
+
+#: gt_gen.c:324
+msgid "Select"
+msgstr "Wählen"
+
+#: gt_gen.c:325
+msgid "Arabic"
+msgstr "Arabisch"
+
+#: gt_gen.c:326
+msgid "German"
+msgstr "Deutsch"
+
+#: gt_gen.c:327
+msgid "English"
+msgstr "Englisch"
+
+#: gt_gen.c:328
+msgid "Spanish"
+msgstr "Spanisch"
+
+#: gt_gen.c:329
+msgid "French"
+msgstr "Französisch"
+
+#: gt_gen.c:330
+msgid "Hindi"
+msgstr "Hindi"
+
+#: gt_gen.c:331
+msgid "Japanese"
+msgstr "Japanisch"
+
+#: gt_gen.c:332
+msgid "Russian"
+msgstr "Russisch"
+
+#: gt_gen.c:333
+msgid "Serbian"
+msgstr "Serbisch"
+
+#: gt_gen.c:334
+msgid "Chinese CN"
+msgstr "Chinesisch CN"
+
+#: gt_gen.c:335
+msgid "Chinese TW"
+msgstr "Chinesische TW"
+
+#: gt_gen.c:336
+#, c-format
+msgid "%d language is available."
+msgid_plural "%d languages are available."
+msgstr[0] "Es ist %d Sprache verfügbar."
+msgstr[1] "Es stehen %d Sprachen zur Verfügung."
+
+#: gt_gen.c:337
+#, c-format
+msgid "%d languages are available."
+msgstr "Es stehen %d Sprachen zur Verfügung."
