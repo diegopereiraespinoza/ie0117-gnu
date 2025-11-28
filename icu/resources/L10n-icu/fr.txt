@@ -1,0 +1,64 @@
+// English Localization (L10n) for fr_* locales
+// i.e. LANG=fr_FR | setlocale(LC_ALL, "fr_FR.UTF-8");
+
+fr {
+	wdw_title           { "Internationalisation" }
+	greeting            { "Bonjour!" }
+	farewell            { "Au revoir!" }
+	welcome             { "Bienvenu!" }
+	lbl_lang            { "Langue" }
+	cmd_lang_root       { "Sélectionner" }
+	cmd_lang_ar         { "Arabe" }
+	cmd_lang_de         { "Allemand" }
+	cmd_lang_en         { "Anglais" }
+	cmd_lang_es         { "Espagnol" }
+	cmd_lang_fr         { "Français" }
+	cmd_lang_hi         { "Hindi" }
+	cmd_lang_ja         { "Japonais" }
+	cmd_lang_ru         { "Russe" }
+	cmd_lang_sr         { "Serbe" }
+	cmd_lang_zh         { "Chinois CN" }
+	cmd_lang_zh_TW      { "Chinois TW" }
+	nlangs              { "%d seule langue est disponible." }
+	nlangs_plural       { "%d langues sont disponibles." }
+	errorcodes {
+		"Aucune erreur",
+		"Argument illégal adopté",
+		"Ressource manquante",
+		"Le format est invalide.",
+		"Erreur d'accès au fichier",
+		"Erreur interne du programme",
+		"Erreur d'analyse du message",
+		"Erreur d'allocation de mémoire",
+		"Erreur d'index hors limites",
+		"Erreur d'analyse",
+		"Caractère invalide trouvé",
+		"caractère tronqué trouvé",
+		"Char illégal trouvé",
+		"Format de tableau invalide",
+		"Fichier de table invalide",
+		"Erreur de dépassement de tampon",
+		"Erreur non prise en charge",
+		"Incompatibilité du type de ressource",
+		"séquence d'évasion illégale",
+		"Séquence d'échappement non prise en charge"
+	}
+	helpTopics {
+		udata           { "Sujet d'aide pour 'udata'" }
+		resourcebundles { "Sujet d'aide pour 'resourcebundles'" }
+		collation       { "Sujet d'aide pour 'collation'" }
+		breakit         { "Sujet d'aide pour 'breakiterator'" }
+		translit        { "Sujet d'aide pour 'transliteration'" }
+		unicode         { "Sujet d'aide pour 'unicode'" }
+		format          { "Sujet d'aide pour 'format'" }
+	}
+	helpKeywords {
+		udata           { "udata" }
+		resourcebundles { "resources" }
+		collation       { "collation" }
+		breakit         { "breakit" }
+		translit        { "transliteration" }
+		unicode         { "unicode" }
+		format          { "format" }
+	}
+}

@@ -1,0 +1,64 @@
+// Default Localization (L10n) for un_resolved locales
+// i.e. LANG=un_KNOWN | setlocale(LC_ALL, "");
+
+root {
+	wdw_title           { "Internationalization" }
+	greeting            { "Hello!" }
+	farewell            { "Goodbye!" }
+	welcome             { "Welcome!" }
+	lbl_lang            { "Language" }
+	cmd_lang_root       { "Select" }
+	cmd_lang_ar         { "Arabic" }
+	cmd_lang_de         { "German" }
+	cmd_lang_en         { "English" }
+	cmd_lang_es         { "Spanish" }
+	cmd_lang_fr         { "French" }
+	cmd_lang_hi         { "Hindi" }
+	cmd_lang_ja         { "Japanese" }
+	cmd_lang_ru         { "Russian" }
+	cmd_lang_sr         { "Serbian" }
+	cmd_lang_zh         { "Chinese CN" }
+	cmd_lang_zh_TW      { "Chinese TW" }
+	nlangs              { "%d language is available." }
+	nlangs_plural       { "%d languages are available." }
+	errorcodes {
+		"U_ZERO_ERROR",
+		"U_ILLEGAL_ARGUMENT_ERROR",
+		"U_MISSING_RESOURCE_ERROR",
+		"U_INVALID_FORMAT_ERROR",
+		"U_FILE_ACCESS_ERROR",
+		"U_INTERNAL_PROGRAM_ERROR",
+		"U_MESSAGE_PARSE_ERROR",
+		"U_MEMORY_ALLOCATION_ERROR",
+		"U_INDEX_OUTOFBOUNDS_ERROR",
+		"U_PARSE_ERROR",
+		"U_INVALID_CHAR_FOUND",
+		"U_TRUNCATED_CHAR_FOUND",
+		"U_ILLEGAL_CHAR_FOUND",
+		"U_INVALID_TABLE_FORMAT",
+		"U_INVALID_TABLE_FILE",
+		"U_BUFFER_OVERFLOW_ERROR",
+		"U_UNSUPPORTED_ERROR",
+		"U_RESOURCE_TYPE_MISMATCH",
+		"U_ILLEGAL_ESCAPE_SEQUENCE",
+		"U_UNSUPPORTED_ESCAPE_SEQUENCE"
+	}
+	helpTopics {
+		udata           { "ROOT Help topic for 'udata'" }
+		resourcebundles { "ROOT Help topic for 'resourcebundles'" }
+		collation       { "ROOT Help topic for 'collation'" }
+		breakit         { "ROOT Help topic for 'breakiterator'" }
+		translit        { "ROOT Help topic for 'transliteration'" }
+		unicode         { "ROOT Help topic for 'unicode'" }
+		format          { "ROOT Help topic for 'format'" }
+	}
+	helpKeywords {
+		udata           { "udata" }
+		resourcebundles { "resources" }
+		collation       { "collation" }
+		breakit         { "breakit" }
+		translit        { "transliteration" }
+		unicode         { "unicode" }
+		format          { "format" }
+	}
+}

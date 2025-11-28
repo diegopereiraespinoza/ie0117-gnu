@@ -1,0 +1,64 @@
+// English Localization (L10n) for de_* locales
+// i.e. LANG=de_DE | setlocale(LC_ALL, "de_DE.UTF-8");
+
+de {
+	wdw_title           { "Internationalisierung" }
+	greeting            { "Hallo!" }
+	farewell            { "Auf Wiedersehen!" }
+	welcome             { "Willkommen!" }
+	lbl_lang            { "Sprache" }
+	cmd_lang_root       { "Wählen" }
+	cmd_lang_ar         { "Arabisch" }
+	cmd_lang_de         { "Deutsch" }
+	cmd_lang_en         { "Englisch" }
+	cmd_lang_es         { "Spanisch" }
+	cmd_lang_fr         { "Französisch" }
+	cmd_lang_hi         { "Hindi" }
+	cmd_lang_ja         { "Japanisch" }
+	cmd_lang_ru         { "Russisch" }
+	cmd_lang_sr         { "Serbisch" }
+	cmd_lang_zh         { "Chinesisch CN" }
+	cmd_lang_zh_TW      { "Chinesische TW" }
+	nlangs              { "Es ist %d Sprache verfügbar." }
+	nlangs_plural       { "Es stehen %d Sprachen zur Verfügung." }
+	errorcodes {
+		"Kein Fehler",
+		"Unzulässiges Argument durchgebracht",
+		"Fehlende Ressource",
+		"Das Format ist ungültig.",
+		"Dateizugriffsfehler",
+		"Interner Programmfehler",
+		"Fehler beim Parsen der Nachricht",
+		"Speicherzuweisungsfehler",
+		"Index außerhalb des gültigen Bereichs",
+		"Parsefehler",
+		"Ungültiges Zeichen gefunden",
+		"Abgeschnittenes Zeichen gefunden",
+		"Ungültiges Zeichen gefunden",
+		"Ungültiges Tabellenformat",
+		"Ungültige Tabellendatei",
+		"Pufferüberlauffehler",
+		"Nicht unterstützter Fehler",
+		"Ressourcentyp stimmt nicht überein",
+		"Illegale Fluchtsequenz",
+		"Nicht unterstützte Escape-Sequenz"
+	}
+	helpTopics {
+		udata           { "Hilfethema für 'udata'" }
+		resourcebundles { "Hilfethema für 'resourcebundles'" }
+		collation       { "Hilfethema für 'collation'" }
+		breakit         { "Hilfethema für 'breakiterator'" }
+		translit        { "Hilfethema für 'transliteration'" }
+		unicode         { "Hilfethema für 'unicode'" }
+		format          { "Hilfethema für 'format'" }
+	}
+	helpKeywords {
+		udata           { "udata" }
+		resourcebundles { "resources" }
+		collation       { "collation" }
+		breakit         { "breakit" }
+		translit        { "transliteration" }
+		unicode         { "unicode" }
+		format          { "format" }
+	}
+}

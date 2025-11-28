@@ -1,0 +1,64 @@
+﻿// English Localization (L10n) for zh_* locales
+// i.e. LANG=zh_CN | setlocale(LC_ALL, "zh_CN.UTF-8");
+
+zh_CN {
+	wdw_title           { "国际化" }
+	greeting            { "你好！" }
+	farewell            { "再见！" }
+	welcome             { "欢迎！" }
+	lbl_lang            { "语言" }
+	cmd_lang_root       { "选择" }
+	cmd_lang_ar         { "阿拉伯" }
+	cmd_lang_de         { "德语" }
+	cmd_lang_en         { "英语" }
+	cmd_lang_es         { "西班牙语" }
+	cmd_lang_fr         { "法语" }
+	cmd_lang_hi         { "印地语" }
+	cmd_lang_ja         { "日本人" }
+	cmd_lang_ru         { "俄语" }
+	cmd_lang_sr         { "塞尔维亚" }
+	cmd_lang_zh         { "中国 CN" }
+	cmd_lang_zh_TW      { "中文 TW" }
+	nlangs              { "提供 %d 种语言。" }
+	nlangs_plural       { "提供 %d 种语言版本。" }
+	errorcodes {
+		"无错误",
+		"非法论点通过",
+		"缺少资源",
+		"格式无效",
+		"文件访问错误",
+		"内部程序错误",
+		"消息解析错误",
+		"内存分配错误",
+		"索引越界错误",
+		"解析错误",
+		"发现无效字符",
+		"发现截断字符",
+		"发现非法字符",
+		"无效的表格格式",
+		"无效的表文件",
+		"缓冲区溢出错误",
+		"不支持的错误",
+		"资源类型不匹配",
+		"非法逃逸序列",
+		"不支持的转义序列"
+	}
+	helpTopics {
+		udata           { "帮助主题 'udata'" }
+		resourcebundles { "帮助主题 'resourcebundles'" }
+		collation       { "帮助主题 'collation'" }
+		breakit         { "帮助主题 'breakiterator'" }
+		translit        { "帮助主题 'transliteration'" }
+		unicode         { "帮助主题 'unicode'" }
+		format          { "帮助主题 'format'" }
+	}
+	helpKeywords {
+		udata           { "udata" }
+		resourcebundles { "resources" }
+		collation       { "collation" }
+		breakit         { "breakit" }
+		translit        { "transliteration" }
+		unicode         { "unicode" }
+		format          { "format" }
+	}
+}
