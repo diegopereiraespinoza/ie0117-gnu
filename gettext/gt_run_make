@@ -1,0 +1,105 @@
+#!/bin/bash
+
+# This script compile, build and run the main program
+# Tested on: Arch Linux | Linux Mint
+# Author: Diego Pereira Espinoza
+# Date: 2025-11-20
+ 
+# variables to store : 
+# this script real path (url = dir/file)
+# and the current working directory (pwd)
+# declares a variable as available for exporting 
+# outside the environment of the script itself
+#declare -x URL="${BASH_SOURCE[0]}"
+declare -x URL
+declare -x DIR
+declare -x FILE
+declare -x PWD
+
+# when executed from outside this directory
+# path is based on that working directory
+# not where this script is located in
+function set_real_script() {
+	#echo "* --> '$*'"
+	#echo "@ --> '$@'"
+	#echo "0 --> '$0'"
+	#echo "1 --> '$1'"
+	#echo "2 --> '$2'"
+	URL="$1"
+	if [[ "$0" == "bash" ]]; then
+		# this happens only when the function is called by sudo
+		# in order to access URL from environment vars
+		# one way is to use the -E option by sudo, otherwise
+		# it requires to receive the script name or path as first argument.
+		URL=$(echo "$@" | awk -F ' ' '{print $1;}')
+	fi
+	if [[ -n "$(command -v realpath 2>/dev/null)" ]]; then
+		# Linux only
+		# next line gets the real full path of the script being executed
+		#URL=$(realpath "${URL}")
+		URL=$(realpath "${URL}")
+	else
+		# Linux & macOS
+		# resolves symbolic links recursively until is no longer a symlink
+		while [ -L "${URL}" ]; do
+			# get symlink directory
+			# current directory where i am executing from
+			PWD="$(cd -P "$(dirname "${URL}")" >/dev/null 2>&1 && pwd)"
+			# readlink gets the resolved real path (in case of symbolic link)
+			URL=$(readlink "${URL}")
+			# resolved real path can be relative or absolute
+			# check if candidate path is relative
+			if [[ "${URL}" != /* ]]; then
+				# if candidate path is relative, resolve to full path
+				# regular expression with / at the beginning means is an absolute symlink or real path
+				# set the next working source path to resolve its real path
+				URL="${PWD}/${URL}"
+			fi
+		done
+	fi
+	# next line gets the real directory of the script being executed
+	# get final script directory path from fully resolved source path
+	DIR="$(cd -P "$(dirname "${URL}")" >/dev/null 2>&1 && pwd)"
+	# next line gets the real file name of the script being executed
+	# To prevent issues related to slashes in path
+	# Must change DELIMITER for sed command
+	# | is used instead of the default /
+	# FILE=$(echo "${URL}" | sed 's/${DIR}\///g') # NOT WORKING
+	# FILE=$(echo "${URL}" | sed -n "s|${DIR}\/||p") # Linux only
+	FILE=$(echo "${URL}" | sed "s|^.*\/\\(.*\\)|\\1|g") # Linux & macOS
+	# next line gets the real full path of the script being executed
+	URL="${DIR}/${FILE}" # Fix if not using realpath
+	# next line gets the directory where the script is being executed from
+	if [[ -n "$(command -v pwd 2>/dev/null)" ]]; then
+		PWD=$(pwd)
+	fi
+	# export by the child DO NOT modifies the parent environment.
+	# export URL
+	#echo "URL --> '${URL}'"
+	#echo "DIR --> '${DIR}'"
+	#echo "FILE --> '${FILE}'"
+	#echo "PWD --> '${PWD}'"
+}
+
+#echo "* --> '$*'"
+#echo "@ --> '$@'"
+#echo "0 --> '$0'"
+#echo "1 --> '$1'"
+#echo "2 --> '$2'"
+set_real_script "$0" "$@"
+
+# compile and build
+cd "${DIR}"
+make clean
+make all # line 3
+# run with any arguments
+#${DIR}/bin/gt_main "$@" # line 5
+if [[ -n "$(command -v valgrind- 2>/dev/null)" ]]; then
+	valgrind --tool=memcheck --leak-check=full ${DIR}/bin/gt_main "$@"
+else
+	#${DIR}/bin/gt_main root ar de fr hi ja ru sr zh zh_TW en es "$@"
+	${DIR}/bin/gt_main "$@"
+fi
+#make clean
+rm -rfv ${DIR}/obj ${DIR}/bin
+exit 0 # line 6
